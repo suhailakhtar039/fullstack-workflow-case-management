@@ -1,12 +1,14 @@
 package com.caseflow.domain;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@Data
 public class User extends BaseEntity{
     @Column(unique = true, nullable = false)
     private String username;
