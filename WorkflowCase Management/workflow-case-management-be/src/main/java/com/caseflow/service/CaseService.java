@@ -1,6 +1,7 @@
 package com.caseflow.service;
 
 import com.caseflow.domain.enums.CaseStatus;
+import com.caseflow.dto.CaseCreateRequest;
 import com.caseflow.dto.CaseResponse;
 
 import java.util.List;
