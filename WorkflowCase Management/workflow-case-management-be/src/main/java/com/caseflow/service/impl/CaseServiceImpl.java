@@ -1,13 +1,22 @@
 package com.caseflow.service.impl;
 
+import com.caseflow.domain.Case;
+import com.caseflow.domain.CaseStatusHistory;
+import com.caseflow.domain.User;
 import com.caseflow.domain.enums.CaseStatus;
 import com.caseflow.dto.CaseCreateRequest;
 import com.caseflow.dto.CaseResponse;
+import com.caseflow.exception.CaseNotFound;
+import com.caseflow.exception.StatusDidNotMatchException;
 import com.caseflow.repository.CaseRepository;
+import com.caseflow.repository.CaseStatusHistoryRepository;
+import com.caseflow.repository.UserRepository;
 import com.caseflow.service.CaseService;
+import com.caseflow.util.CaseStatusTransitionValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +25,12 @@ import java.util.List;
 public class CaseServiceImpl implements CaseService {
     @Autowired
     CaseRepository caseRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    CaseStatusHistoryRepository caseStatusHistoryRepository;
 
     @Override
     public CaseResponse createCase(CaseCreateRequest request) {
@@ -37,6 +52,25 @@ public class CaseServiceImpl implements CaseService {
     )
     @Transactional
     public void transitionStatus(Long caseId, CaseStatus newStatus) {
+        Case c = caseRepository.findById(caseId).orElseThrow(() -> new CaseNotFound("Case with id " + caseId + " not found."));
 
+        CaseStatus oldStatus = c.getStatus();
+        if(!CaseStatusTransitionValidator.isValid(oldStatus, newStatus)){
+            throw new StatusDidNotMatchException("Old Status: " + oldStatus + " new status: "+ newStatus);
+        }
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow();
+
+        c.setStatus(newStatus);
+        caseRepository.save(c);
+
+        CaseStatusHistory history = new CaseStatusHistory();
+        history.setCaseEntity(c);
+        history.setOldStatus(oldStatus);
+        history.setNewState(newStatus);
+        history.setChangedBy(user);
+
+        caseStatusHistoryRepository.save(history);
     }
 }
