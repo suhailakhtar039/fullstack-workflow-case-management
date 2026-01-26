@@ -8,7 +8,9 @@ import com.caseflow.service.WorkflowService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class WorkflowServiceImpl implements WorkflowService {
 
     private static final String WORKFLOW_NAME = "STANDARD_CASE_WORKFLOW";
@@ -33,7 +35,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     public void startWorkflow(Case caseEntity) {
         Workflow workflow = workflowRepository
                 .findByNameAndActiveTrue(WORKFLOW_NAME)
-                .orElseThrow(()->new ItemNotFoundException("Not able to find workflow name"));
+                .orElseThrow(() -> new ItemNotFoundException("Not able to find workflow name"));
 
         CaseWorkflowInstance instance = new CaseWorkflowInstance();
         instance.setCaseEntity(caseEntity);
@@ -50,14 +52,14 @@ public class WorkflowServiceImpl implements WorkflowService {
                 .orElseThrow(() -> new ItemNotFoundException("Not able to find case instance"));
         return stepRepository
                 .findByWorkflowAndStepOrder(instance.getWorkflow(), instance.getCurrentStepOrder())
-                .orElseThrow(()-> new ItemNotFoundException("Step not found"));
+                .orElseThrow(() -> new ItemNotFoundException("Step not found"));
     }
 
     @Override
     public void submitApproval(Long caseId, ApprovalDecision decision, String comments) {
         CaseWorkflowInstance instance = instanceRepository
                 .findByCaseEntityId(caseId)
-                .orElseThrow(()-> new ItemNotFoundException("instance not found"));
+                .orElseThrow(() -> new ItemNotFoundException("instance not found"));
 
         WorkflowStep step = getCurrentStep(caseId);
 
@@ -69,11 +71,14 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         // Role check
 
-        boolean allowed = auth.getAuthorities()
-                .stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_" + step.getAllowedRole()));
+        boolean allowed = auth.getAuthorities().stream()
+                .anyMatch(a ->
+                        a.getAuthority().equals("ROLE_" + step.getAllowedRole()) ||
+                                a.getAuthority().equals("ROLE_ADMIN")
+                );
 
-        if(!allowed){
+
+        if (!allowed) {
             throw new AccessDeniedException("User not allowed for this workflow step");
         }
         Case caseEntity = caseRepository.findById(caseId)

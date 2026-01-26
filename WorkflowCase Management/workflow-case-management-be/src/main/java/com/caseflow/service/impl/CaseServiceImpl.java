@@ -14,6 +14,7 @@ import com.caseflow.repository.CaseRepository;
 import com.caseflow.repository.CaseStatusHistoryRepository;
 import com.caseflow.repository.UserRepository;
 import com.caseflow.service.CaseService;
+import com.caseflow.service.WorkflowService;
 import com.caseflow.util.CaseStatusTransitionValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class CaseServiceImpl implements CaseService {
     @Autowired
     CaseStatusHistoryRepository caseStatusHistoryRepository;
 
+    @Autowired
+    WorkflowService workflowService;
+
     @Override
     @PreAuthorize("hasAnyRole('ADMIN','CASE_MANAGER')")
     public CaseResponse createCase(CaseCreateRequest request) {
@@ -50,6 +54,7 @@ public class CaseServiceImpl implements CaseService {
         c.setCreatedBy(creator);
 
         Case saved = caseRepository.save(c);
+        workflowService.startWorkflow(saved);
         return new CaseResponse(
                 saved.getId(),
                 saved.getCaseNumber(),
