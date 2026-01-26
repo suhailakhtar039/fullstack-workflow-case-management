@@ -7,6 +7,7 @@ import com.caseflow.domain.enums.CaseStatus;
 import com.caseflow.domain.enums.CaseType;
 import com.caseflow.dto.CaseCreateRequest;
 import com.caseflow.dto.CaseResponse;
+import com.caseflow.dto.CaseStatusHistoryResponse;
 import com.caseflow.exception.CaseNotFound;
 import com.caseflow.exception.StatusDidNotMatchException;
 import com.caseflow.repository.CaseRepository;
@@ -78,13 +79,7 @@ public class CaseServiceImpl implements CaseService {
     }
 
     @Override
-    @PreAuthorize("""
-        (hasRole('CASE_MANAGER') and #newStatus.name()=='FILED') or
-        (hasRole('REVIEWER') and #newStatus.name() == 'IN_REVIEW') or
-        (hasRole('APPROVER') and (#newStatus.name() == 'APPROVED' or #newStatus.name() == 'REJECTED')) or
-        (hasRole('ADMIN') and #newStatus.name() == 'CLOSED')
-    """
-    )
+    @PreAuthorize("hasAnyRole('ADMIN','CASE_MANAGER','REVIEWER','APPROVER')")
     @Transactional
     public void transitionStatus(Long caseId, CaseStatus newStatus) {
         Case c = caseRepository.findById(caseId).orElseThrow(() -> new CaseNotFound("Case with id " + caseId + " not found."));
@@ -108,4 +103,18 @@ public class CaseServiceImpl implements CaseService {
 
         caseStatusHistoryRepository.save(history);
     }
+
+    @Override
+    public List<CaseStatusHistoryResponse> getStatusHistory(Long caseId) {
+        return caseStatusHistoryRepository.findByCaseEntityIdOrderByCreatedAtAsc(caseId)
+                .stream()
+                .map(h -> new CaseStatusHistoryResponse(
+                        h.getOldStatus().name(),
+                        h.getNewState().name(),
+                        h.getChangedBy().getUsername(),
+                        h.getCreatedAt()
+                        ))
+                .toList();
+    }
+
 }
