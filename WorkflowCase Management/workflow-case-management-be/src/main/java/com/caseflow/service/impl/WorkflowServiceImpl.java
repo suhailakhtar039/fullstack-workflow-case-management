@@ -2,6 +2,7 @@ package com.caseflow.service.impl;
 
 import com.caseflow.domain.*;
 import com.caseflow.domain.enums.ApprovalDecision;
+import com.caseflow.dto.PendingTaskResponse;
 import com.caseflow.exception.ItemNotFoundException;
 import com.caseflow.repository.*;
 import com.caseflow.service.WorkflowService;
@@ -9,6 +10,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class WorkflowServiceImpl implements WorkflowService {
@@ -101,5 +105,11 @@ public class WorkflowServiceImpl implements WorkflowService {
         //move to next step
         instance.setCurrentStepOrder(instance.getCurrentStepOrder() + 1);
         instanceRepository.save(instance);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PendingTaskResponse> getPendingTasksForRole(String role){
+        return null;
     }
 }
