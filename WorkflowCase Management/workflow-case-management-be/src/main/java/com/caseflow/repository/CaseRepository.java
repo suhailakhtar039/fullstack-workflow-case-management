@@ -20,4 +20,6 @@ public interface CaseRepository extends JpaRepository<Case, Long> {
     Page<Case> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 
     Page<Case> findByCreatedByUsername(String username, Pageable pageable);
+
+    long countByStatus(CaseStatus status);
 }
