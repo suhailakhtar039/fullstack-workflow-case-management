@@ -6,6 +6,10 @@ import com.caseflow.dto.CaseResponse;
 import com.caseflow.dto.CaseStatusHistoryResponse;
 import com.caseflow.service.CaseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +24,13 @@ public class CaseController {
 
     // create case
     @PostMapping
-    public CaseResponse createCase(@RequestBody CaseCreateRequest caseCreateRequest){
+    public CaseResponse createCase(@RequestBody CaseCreateRequest caseCreateRequest) {
         return caseService.createCase(caseCreateRequest);
     }
 
     // get all cases
     @GetMapping
-    public List<CaseResponse> getAllCase(){
+    public List<CaseResponse> getAllCase() {
         return caseService.getAllCases();
     }
 
@@ -42,8 +46,19 @@ public class CaseController {
 
     // get case status history
     @GetMapping("/{id}/history")
-    public List<CaseStatusHistoryResponse> getHistory(@PathVariable Long id){
+    public List<CaseStatusHistoryResponse> getHistory(@PathVariable Long id) {
         return caseService.getStatusHistory(id);
+    }
+
+    @GetMapping("/search")
+    public Page<CaseResponse> searchCases(
+            @RequestParam(required = false) String caseNumber,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) CaseStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return caseService.searchCases(caseNumber, title, status, pageable);
     }
 
 }
