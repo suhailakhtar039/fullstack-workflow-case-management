@@ -16,11 +16,13 @@ import com.caseflow.repository.UserRepository;
 import com.caseflow.service.CaseService;
 import com.caseflow.service.WorkflowService;
 import com.caseflow.util.CaseStatusTransitionValidator;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -90,8 +92,8 @@ public class CaseServiceImpl implements CaseService {
         Case c = caseRepository.findById(caseId).orElseThrow(() -> new CaseNotFound("Case with id " + caseId + " not found."));
 
         CaseStatus oldStatus = c.getStatus();
-        if(!CaseStatusTransitionValidator.isValid(oldStatus, newStatus)){
-            throw new StatusDidNotMatchException("Old Status: " + oldStatus + " new status: "+ newStatus);
+        if (!CaseStatusTransitionValidator.isValid(oldStatus, newStatus)) {
+            throw new StatusDidNotMatchException("Old Status: " + oldStatus + " new status: " + newStatus);
         }
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -118,8 +120,35 @@ public class CaseServiceImpl implements CaseService {
                         h.getNewState().name(),
                         h.getChangedBy().getUsername(),
                         h.getCreatedAt()
-                        ))
+                ))
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CaseResponse> searchCases(String caseNumber, String title, CaseStatus status, Pageable pageable) {
+        Page<Case> page;
+
+        if (caseNumber != null) {
+            page = caseRepository.findByCaseNumberContainingIgnoreCase(caseNumber, pageable);
+        } else if (title != null) {
+            page = caseRepository.findByTitleContainingIgnoreCase(title, pageable);
+        } else if (status != null) {
+            page = caseRepository.findByStatus(status, pageable);
+        } else {
+            page = caseRepository.findAll(pageable);
+        }
+
+        return page.map(c -> new CaseResponse(
+                c.getId(),
+                c.getCaseNumber(),
+                c.getTitle(),
+                c.getStatus().name(),
+                c.getPriority().name(),
+                c.getCaseType().name(),
+                c.getCreatedBy().getUsername()
+        ));
+
     }
 
 }
