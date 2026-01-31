@@ -6,6 +6,7 @@ import com.caseflow.dto.CaseResponse;
 import com.caseflow.dto.CaseStatusHistoryResponse;
 import com.caseflow.dto.DashboardResponse;
 import com.caseflow.service.CaseService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +26,7 @@ public class CaseController {
 
     // create case
     @PostMapping
-    public CaseResponse createCase(@RequestBody CaseCreateRequest caseCreateRequest) {
+    public CaseResponse createCase(@Valid @RequestBody CaseCreateRequest caseCreateRequest) {
         return caseService.createCase(caseCreateRequest);
     }
 
