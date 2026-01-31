@@ -4,12 +4,14 @@ import com.caseflow.dto.ApiErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.nio.file.AccessDeniedException;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler{
 
     @ExceptionHandler(CaseNotFound.class)
@@ -47,21 +49,6 @@ public class GlobalExceptionHandler{
                 ));
     }
 
-    @ExceptionHandler(ItemNotFoundException.class)
-    public ResponseEntity<ApiErrorResponse> handleNotFound(
-            ItemNotFoundException ex,
-            HttpServletRequest request) {
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ApiErrorResponse(
-                        404,
-                        "NOT_FOUND",
-                        ex.getMessage(),
-                        request.getRequestURI(),
-                        System.currentTimeMillis()
-                ));
-    }
-
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiErrorResponse> handleAccessDenied(
             AccessDeniedException ex,
@@ -77,6 +64,29 @@ public class GlobalExceptionHandler{
                 ));
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException methodArgumentNotValidException,
+            HttpServletRequest request){
+
+        String message = methodArgumentNotValidException
+                .getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                .findFirst()
+                .orElse("Validation error");
+
+        return ResponseEntity.badRequest()
+                .body(new ApiErrorResponse(
+                        400,
+                        "Validation Error",
+                        message,
+                        request.getRequestURI(),
+                        System.currentTimeMillis()
+                ));
+    }
+//    Put all exception above this parent exception
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleGeneric(
             Exception ex,
