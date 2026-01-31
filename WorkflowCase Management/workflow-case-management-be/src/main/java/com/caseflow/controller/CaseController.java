@@ -4,6 +4,7 @@ import com.caseflow.domain.enums.CaseStatus;
 import com.caseflow.dto.CaseCreateRequest;
 import com.caseflow.dto.CaseResponse;
 import com.caseflow.dto.CaseStatusHistoryResponse;
+import com.caseflow.dto.DashboardResponse;
 import com.caseflow.service.CaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -59,6 +60,22 @@ public class CaseController {
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return caseService.searchCases(caseNumber, title, status, pageable);
+    }
+
+    @GetMapping("/my")
+    public Page<CaseResponse> myCases(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable =
+                PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        return caseService.getMyCases(pageable);
+    }
+
+    @GetMapping("/dashboard")
+    public DashboardResponse dashboard(){
+        return caseService.getDashboard();
     }
 
 }
