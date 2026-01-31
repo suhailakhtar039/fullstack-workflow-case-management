@@ -18,4 +18,6 @@ public interface CaseRepository extends JpaRepository<Case, Long> {
     Page<Case> findByCaseNumberContainingIgnoreCase(String caseNumber, Pageable pageable);
 
     Page<Case> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+
+    Page<Case> findByCreatedByUsername(String username, Pageable pageable);
 }

@@ -151,4 +151,24 @@ public class CaseServiceImpl implements CaseService {
 
     }
 
+    @Override
+    public Page<CaseResponse> getMyCases(Pageable pageable){
+        String username = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        return caseRepository
+                .findByCreatedByUsername(username, pageable)
+                .map(c -> new CaseResponse(
+                        c.getId(),
+                        c.getCaseNumber(),
+                        c.getTitle(),
+                        c.getStatus().name(),
+                        c.getPriority().name(),
+                        c.getCaseType().name(),
+                        username
+                ));
+    }
+
 }

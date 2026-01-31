@@ -15,4 +15,5 @@ public interface CaseService {
     void transitionStatus(Long caseId, CaseStatus newStatus);
     List<CaseStatusHistoryResponse> getStatusHistory(Long caseId);
     Page<CaseResponse> searchCases(String caseNumber, String title, CaseStatus status, Pageable pageable);
+    Page<CaseResponse> getMyCases(Pageable pageable);
 }
