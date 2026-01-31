@@ -8,6 +8,7 @@ import com.caseflow.domain.enums.CaseType;
 import com.caseflow.dto.CaseCreateRequest;
 import com.caseflow.dto.CaseResponse;
 import com.caseflow.dto.CaseStatusHistoryResponse;
+import com.caseflow.dto.DashboardResponse;
 import com.caseflow.exception.CaseNotFound;
 import com.caseflow.exception.StatusDidNotMatchException;
 import com.caseflow.repository.CaseRepository;
@@ -152,7 +153,7 @@ public class CaseServiceImpl implements CaseService {
     }
 
     @Override
-    public Page<CaseResponse> getMyCases(Pageable pageable){
+    public Page<CaseResponse> getMyCases(Pageable pageable) {
         String username = SecurityContextHolder
                 .getContext()
                 .getAuthentication()
@@ -169,6 +170,19 @@ public class CaseServiceImpl implements CaseService {
                         c.getCaseType().name(),
                         username
                 ));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DashboardResponse getDashboard() {
+        long total = caseRepository.count();
+        long pending = caseRepository.countByStatus(CaseStatus.DRAFT)
+                + caseRepository.countByStatus(CaseStatus.FILED)
+                + caseRepository.countByStatus(CaseStatus.IN_REVIEW);
+
+        long completed = caseRepository.countByStatus(CaseStatus.CLOSED);
+
+        return new DashboardResponse(total, pending, completed);
     }
 
 }
