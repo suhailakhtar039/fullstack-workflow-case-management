@@ -110,6 +110,19 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Override
     @Transactional(readOnly = true)
     public List<PendingTaskResponse> getPendingTasksForRole(String role){
-        return null;
+        List<CaseWorkflowInstance> instances = instanceRepository.findPendingByRole(role);
+
+        return instances
+                .stream()
+                .map(i -> {
+                    Case c = i.getCaseEntity();
+                    return new PendingTaskResponse(
+                            c.getId(),
+                            c.getCaseNumber(),
+                            c.getTitle(),
+                            c.getStatus().name(),
+                            role,
+                            i.getCurrentStepOrder());
+                }).toList();
     }
 }
