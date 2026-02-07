@@ -11,7 +11,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./features/dashboard/dashboard-module').then((m) => m.DashboardModule),
   },
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];
 
 @NgModule({
