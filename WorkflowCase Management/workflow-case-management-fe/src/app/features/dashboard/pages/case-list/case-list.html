@@ -16,6 +16,16 @@
 
     <button mat-raised-button color="primary" (click)="searchCaseAndTitle()">Search</button>
 
+    <mat-form-field appearance="outline" class="w-56">
+      <mat-label>Status</mat-label>
+      <mat-select [(ngModel)]="selectedStatus" (selectionChange)="applyFilters()">
+        <mat-option value="">All</mat-option>
+        <mat-option *ngFor="let s of caseStatuses" [value]="s">
+          {{ s }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
     <button mat-stroked-button (click)="onReset()">Reset</button>
   </div>
 
