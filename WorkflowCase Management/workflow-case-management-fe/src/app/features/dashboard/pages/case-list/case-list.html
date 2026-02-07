@@ -6,18 +6,37 @@
   <div class="flex gap-4 mb-6">
     <mat-form-field appearance="outline" class="w-72">
       <mat-label>Search</mat-label>
-      <input matInput placeholder="Case number or title" />
+      <input
+        matInput
+        placeholder="Case number or title"
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="searchCaseAndTitle()"
+      />
     </mat-form-field>
 
-    <button mat-raised-button color="primary">Search</button>
+    <button mat-raised-button color="primary" (click)="searchCaseAndTitle()">Search</button>
 
-    <button mat-stroked-button>Reset</button>
+    <button mat-stroked-button (click)="onReset()">Reset</button>
   </div>
 
   <!-- Table starts here -->
+  <div *ngIf="isLoading" class="flex justify-center py-10">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+  </div>
 
-  <div class="mat-elevation-z2">
-    <table mat-table [dataSource]="cases" class="w-full">
+  <div
+    *ngIf="!isLoading && !hasError && cases.length === 0"
+    class="text-center text-gray-500 py-10"
+  >
+    No cases found.
+  </div>
+
+  <div *ngIf="hasError" class="mb-4 p-3 rounded bg-red-100 text-red-700">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!isLoading && !hasError && cases.length > 0" class="mat-elevation-z2">
+    <table mat-table [dataSource]="filteredCases" class="w-full">
       <!-- Case number -->
       <ng-container matColumnDef="caseNumber">
         <th mat-header-cell *matHeaderCellDef>Case No</th>
