@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './case-list.css',
 })
 export class CaseList {
-
+  displayedColumns: string[] = ['caseNumber', 'title', 'status'];
 }
