@@ -6,17 +6,23 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class CaseService {
-  private readonly baseUrl = 'http://localhost:8080/api/cases/search';
-
   constructor(private http: HttpClient) {}
+  getCases(page: number, size: number, search?: string, status?: string, myCases?: boolean) {
+    let params: any = { page, size };
 
-  getCases(page: number, size: number, search?: string) {
-    let params = new HttpParams().set('page', page).set('size', size);
-
-    if (search) {
-      params = params.set('title', search);
+    if (search && search.trim()) {
+      params.caseNumber = search;
+      params.title = search;
     }
 
-    return this.http.get<any>(this.baseUrl, { params });
+    if (status) {
+      params.status = status;
+    }
+
+    const url = myCases
+      ? 'http://localhost:8080/api/cases/my'
+      : 'http://localhost:8080/api/cases/search';
+
+    return this.http.get<any>(url, { params });
   }
 }
