@@ -10,15 +10,15 @@
         matInput
         placeholder="Case number or title"
         [(ngModel)]="searchTerm"
-        (keyup.enter)="searchCaseAndTitle()"
+        (keyup.enter)="onSearch()"
       />
     </mat-form-field>
 
-    <button mat-raised-button color="primary" (click)="searchCaseAndTitle()">Search</button>
+    <button mat-raised-button color="primary" (click)="onSearch()">Search</button>
 
     <mat-form-field appearance="outline" class="w-56">
       <mat-label>Status</mat-label>
-      <mat-select [(ngModel)]="selectedStatus" (selectionChange)="applyFilters()">
+      <mat-select [(ngModel)]="selectedStatus">
         <mat-option value="">All</mat-option>
         <mat-option *ngFor="let s of caseStatuses" [value]="s">
           {{ s }}
@@ -46,7 +46,12 @@
   </div>
 
   <div *ngIf="!isLoading && !hasError && cases.length > 0" class="mat-elevation-z2">
-    <table mat-table [dataSource]="filteredCases" class="w-full">
+    <mat-button-toggle-group [(ngModel)]="showMyCases" exclusive>
+      <mat-button-toggle [value]="false">All Cases</mat-button-toggle>
+      <mat-button-toggle [value]="true">My Cases</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <table mat-table [dataSource]="cases" class="w-full">
       <!-- Case number -->
       <ng-container matColumnDef="caseNumber">
         <th mat-header-cell *matHeaderCellDef>Case No</th>

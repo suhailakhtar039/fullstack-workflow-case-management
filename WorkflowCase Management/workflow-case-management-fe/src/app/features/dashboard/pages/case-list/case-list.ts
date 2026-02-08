@@ -25,7 +25,6 @@ export class CaseList {
   hasError = false;
   errorMessage = '';
   searchTerm = '';
-  filteredCases: any[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   constructor(
@@ -38,30 +37,25 @@ export class CaseList {
   }
 
   loadCases(page: number, size: number) {
-    console.log('LOAD START');
+    console.log('loadCases START');
     this.isLoading = true;
 
     this.caseService
-      .getCases(page, size)
+      .getCases(page, size, this.searchTerm, this.selectedStatus, this.showMyCases)
       .pipe(
         finalize(() => {
-          console.log('FINALIZE CALLED isLoading: ', this.isLoading);
           this.isLoading = false;
           this.cdr.markForCheck();
         }),
       )
       .subscribe({
-        next: (response: any) => {
-          console.log('NEXT CALLED isLoading: ', this.isLoading);
-          this.cases = response.content;
-          this.filteredCases = response.content;
-          this.totalElements = response.totalElements;
-          this.applyFilters();
+        next: (res: any) => {
+          this.cases = res.content;
+          this.totalElements = res.totalElements;
         },
-        error: (error) => {
-          console.log('ERROR CALLED', error);
+        error: (err) => {
           this.hasError = true;
-          this.errorMessage = 'Failed to load cases!';
+          this.errorMessage = 'Failed to load cases';
           this.cases = [];
           this.totalElements = 0;
         },
@@ -74,26 +68,9 @@ export class CaseList {
     this.loadCases(event.pageIndex, event.pageSize);
   }
 
-  searchCaseAndTitle() {
+  onSearch() {
     this.paginator.firstPage();
-    this.applyFilters();
-  }
-
-  applyFilters() {
-    const term = this.searchTerm.toLowerCase().trim();
-
-    this.filteredCases = this.cases.filter((c) => {
-      const matchesSearch =
-        !term ||
-        c.caseNumber?.toLowerCase().includes(term) ||
-        c.title?.toLowerCase().includes(term);
-
-      const matchesStatus = !this.selectedStatus || c.status === this.selectedStatus;
-
-      const matchesMyCases = !this.showMyCases || c.createdBy === this.currentUsername;
-
-      return matchesSearch && matchesStatus && matchesMyCases;
-    });
+    this.loadCases(0, this.pageSize);
   }
 
   onReset() {
