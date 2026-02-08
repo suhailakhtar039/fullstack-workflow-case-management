@@ -14,6 +14,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @NgModule({
   declarations: [Dashboard, CaseList],
@@ -29,6 +30,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    MatButtonToggleModule,
   ],
 })
 export class DashboardModule {}
