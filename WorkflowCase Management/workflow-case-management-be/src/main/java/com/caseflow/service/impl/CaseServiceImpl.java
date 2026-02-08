@@ -130,15 +130,28 @@ public class CaseServiceImpl implements CaseService {
     public Page<CaseResponse> searchCases(String caseNumber, String title, CaseStatus status, Pageable pageable) {
         Page<Case> page;
 
-        if (caseNumber != null) {
-            page = caseRepository.findByCaseNumberContainingIgnoreCase(caseNumber, pageable);
-        } else if (title != null) {
-            page = caseRepository.findByTitleContainingIgnoreCase(title, pageable);
-        } else if (status != null) {
+        boolean hasSearch = (caseNumber != null && !caseNumber.isBlank()) ||
+                (title != null && !title.isBlank());
+
+        if (hasSearch && status != null) {
+            page = caseRepository.searchByCaseNumberOrTitleAndStatus(
+                    caseNumber, title, status, pageable);
+        }
+        else if (hasSearch) {
+            page = caseRepository.searchByCaseNumberOrTitle(
+                    caseNumber, title, pageable);
+        }
+        else if (status != null) {
             page = caseRepository.findByStatus(status, pageable);
-        } else {
+        }
+        else {
             page = caseRepository.findAll(pageable);
         }
+
+        String username = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
 
         return page.map(c -> new CaseResponse(
                 c.getId(),
@@ -147,9 +160,8 @@ public class CaseServiceImpl implements CaseService {
                 c.getStatus().name(),
                 c.getPriority().name(),
                 c.getCaseType().name(),
-                c.getCreatedBy().getUsername()
+                username
         ));
-
     }
 
     @Override
