@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { CaseService } from '../../services/case.services';
 import { finalize } from 'rxjs';
 import { apply } from '@angular/forms/signals';
@@ -18,6 +18,7 @@ export class CaseList {
   showMyCases = false;
   currentUsername = 'admin'; // TEMP: replace later from token
   cases: any[] = [];
+  currentPage = 0;
   totalElements = 0;
   pageSize = 10;
 
@@ -62,10 +63,11 @@ export class CaseList {
       });
   }
 
-  onPageChange(event: any) {
+  onPageChange(event: PageEvent) {
     // console.log('check in page change');
+    this.currentPage = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.loadCases(event.pageIndex, event.pageSize);
+    this.loadCases(this.currentPage, this.pageSize);
   }
 
   onSearch() {
