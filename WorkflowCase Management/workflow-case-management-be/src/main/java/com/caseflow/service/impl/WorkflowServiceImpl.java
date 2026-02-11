@@ -109,20 +109,34 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PendingTaskResponse> getPendingTasksForRole(String role){
-        List<CaseWorkflowInstance> instances = instanceRepository.findPendingByRole(role);
+    public List<PendingTaskResponse> getPendingTasksForRole(String role) {
 
-        return instances
-                .stream()
+        List<CaseWorkflowInstance> instances =
+                instanceRepository.findPendingByRole(role);
+
+        return instances.stream()
                 .map(i -> {
                     Case c = i.getCaseEntity();
+
+                    WorkflowStep step = stepRepository
+                            .findByWorkflowAndStepOrder(
+                                    i.getWorkflow(),
+                                    i.getCurrentStepOrder()
+                            )
+                            .orElseThrow(() ->
+                                    new ItemNotFoundException("Workflow step not found"));
+
                     return new PendingTaskResponse(
                             c.getId(),
                             c.getCaseNumber(),
                             c.getTitle(),
                             c.getStatus().name(),
-                            role,
-                            i.getCurrentStepOrder());
-                }).toList();
+                            step.getAllowedRole(),              // pendingRole
+                            step.getStepOrder(),
+                            step.getTargetStatus().name()
+                    );
+                })
+                .toList();
     }
+
 }
