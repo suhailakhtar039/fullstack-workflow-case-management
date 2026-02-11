@@ -36,4 +36,16 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
+
+  getRoles(): string[] {
+    const token = localStorage.getItem(this.TOKEN_KEY);
+    if (!token) return [];
+
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.roles || [];
+  }
+
+  hasRole(role: string): boolean {
+    return this.getRoles().includes(role);
+  }
 }
