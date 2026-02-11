@@ -6,6 +6,7 @@ public record PendingTaskResponse(
         String title,
         String currentStatus,
         String pendingRole,
-        int stepOrder
+        int stepOrder,
+        String targetStatus
 ) {
 }
