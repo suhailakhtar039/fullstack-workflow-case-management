@@ -11,17 +11,26 @@ import { Router } from '@angular/router';
 export class LogInComponent {
   username = '';
   password = '';
+  isLoading?: boolean;
+  errorMessage?: string;
 
   constructor(
     private authService: AuthService,
     private router: Router,
   ) {}
 
-  login(): void {
-    console.log('I have been clicked');
+  login() {
+    this.isLoading = true;
+    this.errorMessage = '';
+
     this.authService.login(this.username, this.password).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
-      error: (err) => console.error(err),
+      next: () => {
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.message || 'Invalid username or password';
+        this.isLoading = false;
+      },
     });
   }
 }
