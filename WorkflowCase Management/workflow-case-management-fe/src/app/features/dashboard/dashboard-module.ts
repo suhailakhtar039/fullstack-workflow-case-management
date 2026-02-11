@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { DashboardRoutingModule } from './dashboard-routing-module';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { CaseList } from './pages/case-list/case-list';
+import { Inbox } from './pages/inbox/inbox';
 
 // angular material imports
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,7 +18,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @NgModule({
-  declarations: [Dashboard, CaseList],
+  declarations: [Dashboard, CaseList, Inbox],
   imports: [
     CommonModule,
     DashboardRoutingModule,
