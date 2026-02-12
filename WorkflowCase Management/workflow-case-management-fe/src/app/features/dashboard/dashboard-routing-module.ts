@@ -3,15 +3,31 @@ import { RouterModule, Routes } from '@angular/router';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { CaseList } from './pages/case-list/case-list';
 import { Inbox } from './pages/inbox/inbox';
+import { roleGuard } from '../../core/guard/role-guard';
+import { DashboardHome } from './pages/dashboard-home/dashboard-home';
 
 const routes: Routes = [
   {
     path: '',
     component: Dashboard,
     children: [
-      { path: 'cases', component: CaseList },
-      { path: 'inbox', component: Inbox },
-      { path: '', redirectTo: 'cases', pathMatch: 'full' },
+      {
+        path: '',
+        component: DashboardHome,
+        pathMatch: 'full', // ✅ IMPORTANT
+      },
+      {
+        path: 'cases',
+        component: CaseList,
+        canActivate: [roleGuard],
+        data: { roles: ['CASE_MANAGER', 'ADMIN'] },
+      },
+      {
+        path: 'inbox',
+        component: Inbox,
+        canActivate: [roleGuard],
+        data: { roles: ['REVIEWER', 'APPROVER', 'ADMIN'] },
+      },
     ],
   },
 ];
