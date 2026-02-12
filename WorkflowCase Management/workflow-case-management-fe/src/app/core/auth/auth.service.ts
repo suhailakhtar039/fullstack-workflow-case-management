@@ -38,11 +38,17 @@ export class AuthService {
   }
 
   getRoles(): string[] {
-    const token = localStorage.getItem(this.TOKEN_KEY);
+    const token = this.getToken();
     if (!token) return [];
 
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.roles || [];
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+
+      // Adjust this based on your backend JWT
+      return payload.roles || payload.authorities || [];
+    } catch {
+      return [];
+    }
   }
 
   hasRole(role: string): boolean {
