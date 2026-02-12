@@ -25,6 +25,7 @@ export class LogInComponent {
 
     this.authService.login(this.username, this.password).subscribe({
       next: () => {
+        console.log('Navigating to dashboard');
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
