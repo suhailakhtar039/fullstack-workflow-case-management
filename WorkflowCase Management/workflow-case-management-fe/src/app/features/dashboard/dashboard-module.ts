@@ -16,9 +16,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { DashboardHome } from './pages/dashboard-home/dashboard-home';
 
 @NgModule({
-  declarations: [Dashboard, CaseList, Inbox],
+  declarations: [Dashboard, CaseList, Inbox, DashboardHome],
   imports: [
     CommonModule,
     DashboardRoutingModule,
