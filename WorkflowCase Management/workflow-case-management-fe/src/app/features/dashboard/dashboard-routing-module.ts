@@ -20,7 +20,7 @@ const routes: Routes = [
         path: 'cases',
         component: CaseList,
         canActivate: [roleGuard],
-        data: { roles: ['CASE_MANAGER', 'ADMIN'] },
+        data: { roles: ['MANAGER', 'ADMIN'] },
       },
       {
         path: 'inbox',
