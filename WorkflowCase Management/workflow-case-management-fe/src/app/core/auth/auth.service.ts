@@ -43,9 +43,11 @@ export class AuthService {
 
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
+      const roles = payload.roles || payload.authorities || [];
 
-      // Adjust this based on your backend JWT
-      return payload.roles || payload.authorities || [];
+      return roles
+        .filter((r: string) => r.startsWith('ROLE_')) // only real roles
+        .map((r: string) => r.replace('ROLE_', '')); // normalize
     } catch {
       return [];
     }
@@ -53,5 +55,14 @@ export class AuthService {
 
   hasRole(role: string): boolean {
     return this.getRoles().includes(role);
+  }
+
+  hasAnyRole(roles: string[]): boolean {
+    if (!roles || roles.length === 0) return false;
+
+    const userRoles = this.getRoles();
+    if (!userRoles || userRoles.length === 0) return false;
+
+    return roles.some((role) => userRoles.includes(role));
   }
 }
