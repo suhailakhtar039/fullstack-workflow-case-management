@@ -5,6 +5,7 @@ import { DashboardRoutingModule } from './dashboard-routing-module';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { CaseList } from './pages/case-list/case-list';
 import { Inbox } from './pages/inbox/inbox';
+import { DashboardHome } from './pages/dashboard-home/dashboard-home';
 
 // angular material imports
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,7 +17,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { DashboardHome } from './pages/dashboard-home/dashboard-home';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [Dashboard, CaseList, Inbox, DashboardHome],
@@ -33,6 +37,11 @@ import { DashboardHome } from './pages/dashboard-home/dashboard-home';
     MatProgressSpinnerModule,
     MatSelectModule,
     MatButtonToggleModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatListModule,
+    MatButtonModule,
+    MatIconModule,
   ],
 })
 export class DashboardModule {}
