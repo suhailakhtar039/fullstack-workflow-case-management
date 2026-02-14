@@ -6,6 +6,7 @@ import { Dashboard } from './pages/dashboard/dashboard';
 import { CaseList } from './pages/case-list/case-list';
 import { Inbox } from './pages/inbox/inbox';
 import { DashboardHome } from './pages/dashboard-home/dashboard-home';
+import { Forbidden } from './pages/forbidden/forbidden';
 
 // angular material imports
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -21,7 +22,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { Forbidden } from './pages/forbidden/forbidden';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
   declarations: [Dashboard, CaseList, Inbox, DashboardHome, Forbidden],
@@ -43,6 +44,7 @@ import { Forbidden } from './pages/forbidden/forbidden';
     MatListModule,
     MatButtonModule,
     MatIconModule,
+    MatCardModule,
   ],
 })
 export class DashboardModule {}
