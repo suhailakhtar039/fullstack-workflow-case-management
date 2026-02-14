@@ -1,3 +1,39 @@
-<div class="dashboard-layout">
-  <router-outlet></router-outlet>
-</div>
+<mat-sidenav-container class="h-screen">
+  <mat-sidenav mode="side" opened class="w-64 bg-slate-900 text-white">
+    <div class="p-6 text-xl font-semibold border-b border-slate-700">CaseFlow</div>
+
+    <mat-nav-list>
+      <a
+        mat-list-item
+        routerLink=""
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="text-white"
+      >
+        <mat-icon class="mr-3">dashboard</mat-icon>
+        Dashboard
+      </a>
+
+      <a mat-list-item routerLink="cases" routerLinkActive="active-link" class="text-white">
+        <mat-icon class="mr-3">description</mat-icon>
+        Cases
+      </a>
+
+      <a mat-list-item routerLink="inbox" routerLinkActive="active-link" class="text-white">
+        <mat-icon class="mr-3">inbox</mat-icon>
+        Inbox
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="bg-gray-100">
+    <mat-toolbar color="primary" class="flex justify-between">
+      <span>Workflow Case Management</span>
+      <button mat-button (click)="logout()">Logout</button>
+    </mat-toolbar>
+
+    <div class="p-6">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

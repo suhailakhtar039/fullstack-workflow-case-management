@@ -1,0 +1,28 @@
+:host ::ng-deep .mat-sidenav {
+  background-color: #0f172a;
+}
+
+/* Force white text at the real element level */
+:host ::ng-deep .mat-sidenav .mat-mdc-list-item {
+  color: white !important;
+}
+
+/* Also force the internal span */
+:host ::ng-deep .mat-sidenav .mdc-list-item__primary-text {
+  color: white !important;
+}
+
+/* Hover */
+:host ::ng-deep .mat-sidenav .mat-mdc-list-item:hover {
+  background-color: #1e293b !important;
+}
+
+/* Active route */
+:host ::ng-deep .active-link {
+  background-color: #1e293b !important;
+}
+
+:host ::ng-deep .active-link {
+  background-color: #1e293b;
+  border-left: 4px solid #38bdf8;
+}
