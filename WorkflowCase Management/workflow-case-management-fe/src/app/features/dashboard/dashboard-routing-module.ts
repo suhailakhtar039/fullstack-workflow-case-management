@@ -14,7 +14,7 @@ const routes: Routes = [
       {
         path: '',
         component: DashboardHome,
-        pathMatch: 'full', // ✅ IMPORTANT
+        pathMatch: 'full',
       },
       {
         path: 'cases',
