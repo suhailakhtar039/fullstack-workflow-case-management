@@ -1,4 +1,6 @@
 package com.caseflow.domain;
 
-public class TransitionOptions {
+import com.caseflow.domain.enums.CaseStatus;
+
+public record TransitionOptions(CaseStatus status, String label) {
 }
