@@ -21,11 +21,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CaseServiceImpl implements CaseService {
@@ -87,13 +91,22 @@ public class CaseServiceImpl implements CaseService {
     }
 
     @Override
-    @PreAuthorize("hasAnyRole('ADMIN','CASE_MANAGER','REVIEWER','APPROVER')")
+    @PreAuthorize("isAuthenticated()")
     @Transactional
     public void transitionStatus(Long caseId, CaseStatus newStatus) {
         Case c = caseRepository.findById(caseId).orElseThrow(() -> new CaseNotFound("Case with id " + caseId + " not found."));
 
         CaseStatus oldStatus = c.getStatus();
-        if (!CaseStatusTransitionValidator.isValid(oldStatus, newStatus)) {
+        Authentication authentication = SecurityContextHolder.
+                getContext().
+                getAuthentication();
+        Set<String> roles = authentication
+                .getAuthorities()
+                .stream()
+                .map(auth -> auth.getAuthority().replace("ROLE_", ""))
+                .collect(Collectors.toSet());
+
+        if (!CaseStatusTransitionValidator.isValid(oldStatus, newStatus, roles)) {
             throw new StatusDidNotMatchException("Old Status: " + oldStatus + " new status: " + newStatus);
         }
 
@@ -196,5 +209,28 @@ public class CaseServiceImpl implements CaseService {
 
         return new DashboardResponse(total, pending, completed);
     }
+
+    public Set<CaseStatus> getAllowedTransitions(Long caseId) {
+
+        Case c = caseRepository.findById(caseId)
+                .orElseThrow(() -> new CaseNotFound("Case not found"));
+
+        CaseStatus currentStatus = c.getStatus();
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        Set<String> roles = authentication.getAuthorities()
+                .stream()
+                .map(auth -> auth.getAuthority().replace("ROLE_", ""))
+                .collect(Collectors.toSet());
+
+        return Arrays.stream(CaseStatus.values())
+                .filter(next ->
+                        CaseStatusTransitionValidator
+                                .isValid(currentStatus, next, roles))
+                .collect(Collectors.toSet());
+    }
+
 
 }

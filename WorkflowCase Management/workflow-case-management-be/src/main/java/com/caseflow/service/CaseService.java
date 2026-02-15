@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Set;
 
 public interface CaseService {
     CaseResponse createCase(CaseCreateRequest request);
@@ -24,4 +25,6 @@ public interface CaseService {
     Page<CaseResponse> getMyCases(Pageable pageable);
 
     DashboardResponse getDashboard();
+
+    Set<CaseStatus> getAllowedTransitions(Long caseId);
 }
