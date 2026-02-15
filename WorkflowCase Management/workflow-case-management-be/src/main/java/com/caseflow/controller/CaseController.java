@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/cases")
@@ -77,6 +78,12 @@ public class CaseController {
     @GetMapping("/dashboard")
     public DashboardResponse dashboard(){
         return caseService.getDashboard();
+    }
+
+    @GetMapping("/{id}/allowed-transitions")
+    public ResponseEntity<Set<CaseStatus>> getAllowedTransition(@PathVariable Long id){
+        Set<CaseStatus> allowed = caseService.getAllowedTransitions(id);
+        return ResponseEntity.ok(allowed);
     }
 
 }
