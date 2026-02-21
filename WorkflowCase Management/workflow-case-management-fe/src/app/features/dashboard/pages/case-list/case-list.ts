@@ -11,7 +11,7 @@ import { apply } from '@angular/forms/signals';
   styleUrl: './case-list.css',
 })
 export class CaseList {
-  displayedColumns: string[] = ['caseNumber', 'title', 'status'];
+  displayedColumns: string[] = ['caseNumber', 'title', 'status', 'actions'];
   caseStatuses: string[] = ['DRAFT', 'IN_REVIEW', 'FILED', 'APPROVED', 'REJECTED'];
 
   selectedStatus: string = '';
@@ -51,8 +51,26 @@ export class CaseList {
       )
       .subscribe({
         next: (res: any) => {
-          this.cases = res.content;
+          this.cases = res.content.map((c: any) => ({
+            ...c,
+            allowedTransitions: [],
+          }));
           this.totalElements = res.totalElements;
+          this.cases.forEach((c, index) => {
+            this.caseService.getAllowedTransitions(c.id).subscribe((transitions: string[]) => {
+              const updatedCase = {
+                ...c,
+                allowedTransitions: transitions,
+              };
+              this.cases = [
+                ...this.cases.slice(0, index),
+                updatedCase,
+                ...this.cases.slice(index + 1),
+              ];
+              this.cdr.markForCheck();
+              // c.allowedTransitions = transitions;
+            });
+          });
         },
         error: (err) => {
           this.hasError = true;
@@ -82,5 +100,23 @@ export class CaseList {
 
     this.paginator.firstPage();
     this.loadCases(0, this.pageSize);
+  }
+
+  transition(caseId: number, status: string) {
+    this.caseService.transitionCase(caseId, status).subscribe({
+      next: () => {
+        this.loadCases(this.currentPage, this.pageSize);
+      },
+      error: () => {
+        console.error('Transition failed');
+      },
+    });
+  }
+
+  formatLabel(status: string): string {
+    return status
+      .replace('_', ' ')
+      .toLowerCase()
+      .replace(/\b\w/g, (c) => c.toUpperCase());
   }
 }
