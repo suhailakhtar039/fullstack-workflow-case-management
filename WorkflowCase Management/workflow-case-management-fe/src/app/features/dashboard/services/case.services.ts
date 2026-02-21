@@ -3,6 +3,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
+export interface Case {
+  id: number;
+  title: string;
+  status: string;
+  allowedTransitions?: string[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -29,8 +36,14 @@ export class CaseService {
   }
 
   transitionCase(caseId: number, status: string) {
-    return this.http.patch<void>(environment.apiBaseUrl + '/cases/' + caseId + 'status', null, {
+    return this.http.patch<void>(environment.apiBaseUrl + '/cases/' + caseId + '/status', null, {
       params: { status },
     });
+  }
+
+  getAllowedTransitions(caseId: number) {
+    const allowedTransitionApiUrl =
+      environment.apiBaseUrl + '/cases/' + caseId + '/allowed-transitions';
+    return this.http.get<string[]>(allowedTransitionApiUrl);
   }
 }
