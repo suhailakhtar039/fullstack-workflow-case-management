@@ -22,7 +22,7 @@ public class TestSecurityController {
         return new ResponseEntity<>("Admin only", HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyRole(T(com.caseflow.util.SecurityRoles).ADMIN,T(com.caseflow.util.SecurityRoles).CASE_MANAGER)")
+    @PreAuthorize("hasAnyRole(T(com.caseflow.util.SecurityRoles).ADMIN,T(com.caseflow.util.SecurityRoles).MANAGER)")
     @GetMapping("/manager")
     public ResponseEntity<String> managerAccess(){
         return new ResponseEntity<>("Admin or Manager access", HttpStatus.OK);

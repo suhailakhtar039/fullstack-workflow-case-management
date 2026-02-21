@@ -17,7 +17,7 @@ public class CaseStatusTransitionValidator {
 
             case DRAFT ->
                     to == CaseStatus.FILED &&
-                            roles.contains("CASE_MANAGER");
+                            roles.contains("MANAGER");
 
             case FILED ->
                     to == CaseStatus.IN_REVIEW &&

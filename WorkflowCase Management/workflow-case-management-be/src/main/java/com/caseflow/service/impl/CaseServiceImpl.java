@@ -46,7 +46,7 @@ public class CaseServiceImpl implements CaseService {
     WorkflowService workflowService;
 
     @Override
-    @PreAuthorize("hasAnyRole('ADMIN','CASE_MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public CaseResponse createCase(CaseCreateRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
