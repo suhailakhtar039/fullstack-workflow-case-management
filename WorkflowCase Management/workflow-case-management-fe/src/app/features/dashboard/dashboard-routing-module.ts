@@ -23,6 +23,10 @@ const routes: Routes = [
         data: { roles: ['MANAGER', 'ADMIN', 'REVIEWER', 'APPROVER', 'VIEWER'] },
       },
       {
+        path: 'cases/:id',
+        loadComponent: () => import('./pages/case-detail/case-detail').then((m) => m.CaseDetail),
+      },
+      {
         path: 'inbox',
         component: Inbox,
         canActivate: [roleGuard],
