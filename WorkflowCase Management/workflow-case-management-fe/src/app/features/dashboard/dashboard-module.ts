@@ -23,9 +23,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { CaseDetail } from './pages/case-detail/case-detail';
 
 @NgModule({
-  declarations: [Dashboard, CaseList, Inbox, DashboardHome, Forbidden],
+  declarations: [Dashboard, CaseList, Inbox, DashboardHome, Forbidden, CaseDetail],
   imports: [
     CommonModule,
     DashboardRoutingModule,
