@@ -5,6 +5,7 @@ import { CaseList } from './pages/case-list/case-list';
 import { Inbox } from './pages/inbox/inbox';
 import { roleGuard } from '../../core/guard/role-guard';
 import { DashboardHome } from './pages/dashboard-home/dashboard-home';
+import { CaseDetail } from './pages/case-detail/case-detail';
 
 const routes: Routes = [
   {
@@ -24,7 +25,7 @@ const routes: Routes = [
       },
       {
         path: 'cases/:id',
-        loadComponent: () => import('./pages/case-detail/case-detail').then((m) => m.CaseDetail),
+        component: CaseDetail,
       },
       {
         path: 'inbox',
