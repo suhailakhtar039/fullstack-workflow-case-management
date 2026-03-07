@@ -27,4 +27,6 @@ public interface CaseService {
     DashboardResponse getDashboard();
 
     Set<CaseStatus> getAllowedTransitions(Long caseId);
+
+    CaseResponse getCaseById(Long id);
 }

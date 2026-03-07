@@ -232,5 +232,18 @@ public class CaseServiceImpl implements CaseService {
                 .collect(Collectors.toSet());
     }
 
-
+    @Override
+    public CaseResponse getCaseById(Long id){
+        Case caseEntity = caseRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Case not found"));
+        return new CaseResponse(
+                caseEntity.getId(),
+                caseEntity.getCaseNumber(),
+                caseEntity.getTitle(),
+                caseEntity.getStatus().name(),
+                caseEntity.getPriority().name(),
+                caseEntity.getCaseType().name(),
+                caseEntity.getCreatedBy().getUsername()
+        );
+    }
 }

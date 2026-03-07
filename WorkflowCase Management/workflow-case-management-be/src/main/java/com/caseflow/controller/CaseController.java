@@ -86,4 +86,9 @@ public class CaseController {
         return ResponseEntity.ok(allowed);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CaseResponse> getCase(@PathVariable Long id){
+        return ResponseEntity.ok(caseService.getCaseById(id));
+    }
+
 }
