@@ -46,4 +46,12 @@ export class CaseService {
       environment.apiBaseUrl + '/cases/' + caseId + '/allowed-transitions';
     return this.http.get<string[]>(allowedTransitionApiUrl);
   }
+
+  getCaseById(caseId: number) {
+    return this.http.get<Case>(this.baseApiUrl + '/cases/' + caseId);
+  }
+
+  getCaseHistory(caseId: number) {
+    return this.http.get<any[]>(this.baseApiUrl + '/cases/' + caseId + '/history');
+  }
 }
