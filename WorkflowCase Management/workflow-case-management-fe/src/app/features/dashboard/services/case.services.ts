@@ -10,6 +10,13 @@ export interface Case {
   allowedTransitions?: string[];
 }
 
+export interface CaseStatusHistory {
+  oldStatus: string;
+  newStatus: string;
+  changedBy: string;
+  changedAt: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
