@@ -1,28 +1,54 @@
-<mat-card *ngIf="caseData">
-  <h2>Case {{ caseData.caseNumber }}</h2>
+<mat-card class="case-card" *ngIf="caseData">
+  <mat-card-header>
+    <mat-card-title> Case {{ caseData.caseNumber }} </mat-card-title>
 
-  <p><strong>Title:</strong> {{ caseData.title }}</p>
+    <mat-card-subtitle>
+      {{ caseData.title }}
+    </mat-card-subtitle>
+  </mat-card-header>
 
-  <p>
-    <strong>Status:</strong>
-    <mat-chip color="primary">
-      {{ caseData.status }}
-    </mat-chip>
-  </p>
+  <mat-card-content>
+    <div class="case-meta">
+      <div class="status-block">
+        <span class="label">Status</span>
+
+        <mat-chip color="primary" selected>
+          {{ caseData.status }}
+        </mat-chip>
+      </div>
+
+      <div>
+        <span class="label">Priority</span>
+        {{ caseData.priority }}
+      </div>
+
+      <div>
+        <span class="label">Type</span>
+        {{ caseData.type }}
+      </div>
+
+      <div>
+        <span class="label">Created By</span>
+        {{ caseData.createdBy }}
+      </div>
+    </div>
+  </mat-card-content>
 </mat-card>
 
 <mat-divider></mat-divider>
 
 <h3>Status History</h3>
 
-<mat-list>
-  <mat-list-item *ngFor="let h of history">
-    <div>
-      <strong>{{ h.oldStatus }} → {{ h.newStatus }}</strong>
-      <br />
-      by {{ h.changedBy }}
-      <br />
-      {{ h.createdAt | date: 'medium' }}
+<mat-list *ngIf="history.length > 0">
+  <mat-list-item *ngFor="let h of history; trackBy: trackByIndex">
+    <div matListItemTitle>{{ h.oldStatus }} → {{ h.newStatus }}</div>
+
+    <div matListItemLine>by {{ h.changedBy }}</div>
+
+    <div matListItemLine>
+      {{ h.changedAt | date: 'medium' }}
     </div>
   </mat-list-item>
 </mat-list>
+
+<div *ngIf="history.length === 0">No status history yet.</div>
