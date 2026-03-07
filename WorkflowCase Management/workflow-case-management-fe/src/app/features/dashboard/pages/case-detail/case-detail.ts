@@ -1,22 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CaseService } from '../../services/case.services';
+import { CaseService, CaseStatusHistory } from '../../services/case.services';
 
 @Component({
   selector: 'app-case-detail',
   standalone: false,
   templateUrl: './case-detail.html',
-  styleUrl: './case-detail.css',
+  styleUrls: ['./case-detail.css'],
 })
 export class CaseDetail implements OnInit {
   caseId!: number;
   caseData: any;
-  history: any[] = [];
+  history: CaseStatusHistory[] = [];
   allowedTransitions: string[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private caseService: CaseService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -31,12 +32,23 @@ export class CaseDetail implements OnInit {
   }
 
   loadHistory() {
-    this.caseService.getCaseHistory(this.caseId).subscribe((data) => (this.history = data));
+    this.caseService.getCaseHistory(this.caseId).subscribe({
+      next: (data) => {
+        this.history = data;
+        this.cdr.detectChanges();
+        console.log('History response:', data);
+      },
+      error: (err) => console.error('History error:', err),
+    });
   }
 
   loadTransitions() {
     this.caseService
       .getAllowedTransitions(this.caseId)
       .subscribe((data) => (this.allowedTransitions = data));
+  }
+
+  trackByIndex(index: number) {
+    return index;
   }
 }
