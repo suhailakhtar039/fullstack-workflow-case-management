@@ -56,7 +56,9 @@
       <ng-container matColumnDef="caseNumber">
         <th mat-header-cell *matHeaderCellDef>Case No</th>
         <td mat-cell *matCellDef="let row">
-          <a [routerLink]="['/dashboard/cases', row.id]"> {{ row.caseNumber }} </a>
+          <a [routerLink]="['/dashboard/cases', row.id]" class="text-blue-800 underline">
+            {{ row.caseNumber }}
+          </a>
         </td>
       </ng-container>
       <!-- Title -->
